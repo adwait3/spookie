@@ -19,14 +19,12 @@ public class Main extends ApplicationAdapter {
     public AssetManager assets;
     public Environment environment;
     public ModelBatch modelBatch;
-    public ModelInstance alphabetsInstance;
     public Model floorModel, wallModel, leftWallModel, rightWallModel, backWallModel, frontWallModel;
     public ModelInstance floorInstance, wallInstance, leftWallInstance, rightWallInstance, backWallInstance, frontWallInstance;
 
     private float movementSpeed = 15f;
     private Vector3 movement = new Vector3();
     private ShapeRenderer shapeRenderer;
-    public boolean loading;
 
     @Override
     public void create () {
@@ -40,14 +38,11 @@ public class Main extends ApplicationAdapter {
         cam.far = 300f;
         cam.update();
 
-        assets = new AssetManager();
         modelBatch = new ModelBatch();
         shapeRenderer = new ShapeRenderer();
 
         ModelBuilder modelBuilder = new ModelBuilder();
-        assets.load("alphabets.g3db", Model.class);
-        loading = true;
-
+        // modelBuilder.begin();
         floorModel = modelBuilder.createBox(100f, 1f, 100f,
             new Material(ColorAttribute.createDiffuse(Color.GRAY)),
             VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
@@ -74,19 +69,8 @@ public class Main extends ApplicationAdapter {
 
     }
 
-    private void doneLoading() {
-        loading = false;
-        Model alphabets = assets.get("alphabets.g3db", Model.class);
-        ModelInstance alphabetsInstance = new ModelInstance(alphabets);
-        alphabetsInstance.transform.setToTranslation(10f, 10f, 0f);
-        loading = false;
-    }
-
-
     @Override
     public void render () {
-        if (loading && assets.update())
-            doneLoading();
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
