@@ -22,8 +22,8 @@ public class Main extends ApplicationAdapter {
     public PerspectiveCamera cam;
     public Environment environment;
     public ModelBatch modelBatch;
-    private List<Model> alphabetModels = new ArrayList<>();
-    private List<ModelInstance> alphabetInstances = new ArrayList<>();
+    private List<Model> Models = new ArrayList<>();
+    private List<ModelInstance> ModelInstances = new ArrayList<>();
     private AssetManager assetManager;
     public Model floorModel, wallModel, leftWallModel, rightWallModel, backWallModel, frontWallModel;
     public ModelInstance floorInstance, wallInstance, leftWallInstance, rightWallInstance, backWallInstance, frontWallInstance;
@@ -41,16 +41,10 @@ public class Main extends ApplicationAdapter {
         cam = new PerspectiveCamera(75, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(0f, 5f, 0f);
 
-        cam.near = 1f;
         cam.far = 5000f;
         cam.update();
 
-        loadAlphabetModels();
-//        assetManager.load("alphabets.g3db", Model.class);
-//        assetManager.finishLoading();
-//        alphabetsModel = assetManager.get("alphabets.g3db", Model.class);
-//        alphabetsInstance = new ModelInstance(alphabetsModel);
-//        alphabetsInstance.transform.setToTranslation(0f, 2f, 0f);
+        loadModels();
 
         modelBatch = new ModelBatch();
         shapeRenderer = new ShapeRenderer();
@@ -89,25 +83,23 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         checkButtonDown();
-        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glDepthFunc(GL20.GL_ALWAYS);
-        Gdx.gl.glDepthFunc(GL20.GL_LESS);
 
         modelBatch.begin(cam);
+
+        for (ModelInstance alphabetInstance : ModelInstances) {
+            modelBatch.render(alphabetInstance, environment);
+        }
+
         modelBatch.render(floorInstance, environment);
         modelBatch.render(frontWallInstance, environment);
         modelBatch.render(backWallInstance, environment);
         modelBatch.render(leftWallInstance, environment);
         modelBatch.render(rightWallInstance, environment);
-
-        for (ModelInstance alphabetInstance : alphabetInstances) {
-            modelBatch.render(alphabetInstance, environment);
-        }
-
         modelBatch.end();
+
         drawButtons();
     }
-    private void loadAlphabetModels() {
+    private void loadModels() {
         // Load models for a-z
         for (char i = 0; i <= 38; i++) {
             String modelName = Integer.toString(i) + ".g3db";
@@ -117,7 +109,6 @@ public class Main extends ApplicationAdapter {
         // Finish loading all models
         assetManager.finishLoading();
 
-        // Create model instances and position them
         float xOffset = 0f; // Starting x position
         float yOffset = 0f;    // Fixed y position
         float zOffset = 0f;    // Fixed z position
@@ -128,8 +119,8 @@ public class Main extends ApplicationAdapter {
             ModelInstance instance = new ModelInstance(model);
             instance.transform.setToTranslation(xOffset, yOffset, zOffset);
 
-            alphabetModels.add(model);
-            alphabetInstances.add(instance);
+            Models.add(model);
+            ModelInstances.add(instance);
 
             xOffset += 100f;
         }
@@ -189,7 +180,7 @@ public class Main extends ApplicationAdapter {
         rightWallModel.dispose();
         backWallModel.dispose();
         frontWallModel.dispose();
-        for (Model model : alphabetModels) {
+        for (Model model : Models) {
             model.dispose();
         }
 
