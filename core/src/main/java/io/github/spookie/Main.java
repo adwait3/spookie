@@ -89,6 +89,9 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         checkButtonDown();
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthFunc(GL20.GL_ALWAYS);
+        Gdx.gl.glDepthFunc(GL20.GL_LESS);
 
         modelBatch.begin(cam);
         modelBatch.render(floorInstance, environment);
