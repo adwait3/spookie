@@ -10,16 +10,20 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     public PerspectiveCamera cam;
     public Environment environment;
     public ModelBatch modelBatch;
-    public Model alphabetsModel;
-    public ModelInstance alphabetsInstance;
+    private List<Model> alphabetModels = new ArrayList<>();
+    private List<ModelInstance> alphabetInstances = new ArrayList<>();
     private AssetManager assetManager;
     public Model floorModel, wallModel, leftWallModel, rightWallModel, backWallModel, frontWallModel;
     public ModelInstance floorInstance, wallInstance, leftWallInstance, rightWallInstance, backWallInstance, frontWallInstance;
@@ -41,11 +45,12 @@ public class Main extends ApplicationAdapter {
         cam.far = 5000f;
         cam.update();
 
-        assetManager.load("alphabets.g3db", Model.class);
-        assetManager.finishLoading();
-        alphabetsModel = assetManager.get("alphabets.g3db", Model.class);
-        alphabetsInstance = new ModelInstance(alphabetsModel);
-        alphabetsInstance.transform.setToTranslation(0f, 2f, 0f);
+        loadAlphabetModels();
+//        assetManager.load("alphabets.g3db", Model.class);
+//        assetManager.finishLoading();
+//        alphabetsModel = assetManager.get("alphabets.g3db", Model.class);
+//        alphabetsInstance = new ModelInstance(alphabetsModel);
+//        alphabetsInstance.transform.setToTranslation(0f, 2f, 0f);
 
         modelBatch = new ModelBatch();
         shapeRenderer = new ShapeRenderer();
@@ -91,10 +96,42 @@ public class Main extends ApplicationAdapter {
         modelBatch.render(backWallInstance, environment);
         modelBatch.render(leftWallInstance, environment);
         modelBatch.render(rightWallInstance, environment);
-        modelBatch.render(alphabetsInstance, environment);
+
+        for (ModelInstance alphabetInstance : alphabetInstances) {
+            modelBatch.render(alphabetInstance, environment);
+        }
+
         modelBatch.end();
         drawButtons();
     }
+    private void loadAlphabetModels() {
+        // Load models for a-z
+        for (char i = 0; i <= 38; i++) {
+            String modelName = Integer.toString(i) + ".g3db";
+            assetManager.load(modelName, Model.class);
+        }
+
+        // Finish loading all models
+        assetManager.finishLoading();
+
+        // Create model instances and position them
+        float xOffset = 0f; // Starting x position
+        float yOffset = 0f;    // Fixed y position
+        float zOffset = 0f;    // Fixed z position
+
+        for (char i = 0; i <= 38; i++) {
+            String modelName = Integer.toString(i) + ".g3db";
+            Model model = assetManager.get(modelName, Model.class);
+            ModelInstance instance = new ModelInstance(model);
+            instance.transform.setToTranslation(xOffset, yOffset, zOffset);
+
+            alphabetModels.add(model);
+            alphabetInstances.add(instance);
+
+            xOffset += 100f;
+        }
+    }
+
     private void drawButtons(){
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.GRAY);
@@ -149,12 +186,20 @@ public class Main extends ApplicationAdapter {
         rightWallModel.dispose();
         backWallModel.dispose();
         frontWallModel.dispose();
-        if (alphabetsModel != null) {
-            alphabetsModel.dispose();
+        for (Model model : alphabetModels) {
+            model.dispose();
         }
+
         if (assetManager != null) {
             assetManager.dispose();
         }
+
+//        if (alphabetsModel != null) {
+//            alphabetsModel.dispose();
+//        }
+//        if (assetManager != null) {
+//            assetManager.dispose();
+//        }
     }
     @Override
     public void resume () {
