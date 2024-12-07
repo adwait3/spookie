@@ -98,6 +98,7 @@ public class Main extends ApplicationAdapter {
         modelBatch.end();
 
         drawButtons();
+
     }
     private void loadModels() {
         // Load models for a-z
