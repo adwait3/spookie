@@ -138,6 +138,7 @@ public class Main extends ApplicationAdapter {
         ModelInstances.get(82).transform.setToTranslation(4470f, -130f, 2040f);
         ModelInstances.get(83).transform.setToTranslation(-4110f, 270f, 3740f);
         ModelInstances.get(84).transform.setToTranslation(6360f, 720f, 6950f);
+
         ModelInstances.get(85).transform.setToTranslation(-2100f, 350f, 3640f);
         ModelInstances.get(86).transform.setToTranslation(560f, -390f, -7550f);
         ModelInstances.get(87).transform.setToTranslation(2070f, -640f, -2910f);
